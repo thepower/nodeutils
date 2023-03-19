@@ -7,37 +7,19 @@ if [ -z $HOSTNAME ]
   then HOSTNAME="Hostname not defined"
 fi
 
-PIDhttp=$(lsof -i :80 -t)
-if [ $? != "0" ]
-  then socat TCP4-LISTEN:80 - &
-       PIDHTTP=$!  
-       echo "Start listening to the port 80 ($PIDHTTP)"
-  else echo "Port 80 is already in use ($PIDhttp)"
-fi
+PLIST=""
 
-PIDapi=$(lsof -i :1080 -t)
-if [ $? != "0" ]
-  then socat TCP4-LISTEN:1080 - &
-       PIDAPI=$!
-       echo "Start listening to the port 1080 ($PIDAPI)"
-  else echo "Port 1080 is already in use ($PIDapi)"
-fi
-
-PIDapis=$(lsof -i :1443 -t)
-if [ $? != "0" ]
-  then socat TCP4-LISTEN:1443 - &
-       PIDAPIS=$!
-       echo "Start listening to the port 1443 ($PIDAPIS)"
-  else echo "Port 1443 is already in use ($PIDapis)"
-fi
-
-PIDtpic=$(lsof -i :1800 -t)
-if [ $? != "0" ]
-  then socat TCP4-LISTEN:1800 - &
-       PIDTPIK=$!
-       echo "Start listening to the port 1800 ($PIDTPIK)"
-  else echo "Port 1800 is already in use ($PIDtpic)"
-fi
+for P in "80" "1080" "1443" "1800"
+  do
+    PID=$(lsof -i :$P -t)
+    if [ $? != "0" ]
+      then socat TCP4-LISTEN:$P - &
+        PL="$! "
+        echo "Start listening to the port $P ($PL)"
+	PLIST="$PL $PLIST"
+      else echo "Port $P is already in use ($PID)"
+    fi
+  done	  
 
 STATUS=$(curl -s http://ansible.thepower.io:26299)
 IP=$(echo $STATUS | jq -r .ip)
@@ -54,7 +36,7 @@ echo "TPIC : $TPIC"
 echo "HTTP : $HTTP"
 tput sgr0
 
-if ps -p $PIDAPI > /dev/null; then kill -9 $PIDAPI; fi
-if ps -p $PIDAPIS > /dev/null; then kill -9 $PIDAPIS; fi
-if ps -p $PIDHTTP > /dev/null; then kill -9 $PIDHTTP; fi
-if ps -p $PIDTPIK > /dev/null; then kill -9 $PIDTPIK; fi
+if [ -n "$PLIST" ]
+  then kill -9 $PLIST 2> /dev/null
+fi
+
