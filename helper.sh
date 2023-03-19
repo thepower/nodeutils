@@ -1,19 +1,33 @@
 #!/bin/bash
 
-apt-get -y install socat > /dev/null
+PLIST=""
+declare -A PORTS
+PORTS["HTTP"]="80"
+PORTS["API"]="1080"
+PORTS["APIS"]="1443"
+PORTS["TPIC"]="1800"
+NODECONFIG="/opt/thepower/node.config"
 
-HOSTNAME=$(grep hostname /opt/thepower/node.config | cut -d '"' -f2)
+dpkg -s socat 2>1 1> /dev/null
+if [ "$?" != "0"  ]
+  then
+    echo -e "\033[33mThe \033[1;33msocat\033[0;33m package will be installed"
+    tput sgr0
+    apt-get -y install socat 2>1 > /dev/null
+fi
+
+HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2)
+
 if [ -z $HOSTNAME ]
   then HOSTNAME="Hostname not defined"
 fi
 
-PLIST=""
-
-for P in "80" "1080" "1443" "1800"
+for P in "${PORTS[@]}"
   do
     PID=$(lsof -i :$P -t)
-    if [ $? != "0" ]
-      then socat TCP4-LISTEN:$P - &
+    if [ "$?" != "0" ]
+      then
+	socat TCP4-LISTEN:$P - &
         PL="$! "
         echo "Start listening to the port $P ($PL)"
 	PLIST="$PL $PLIST"
