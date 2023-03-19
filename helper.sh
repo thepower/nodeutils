@@ -2,10 +2,11 @@
 
 PLIST=""
 declare -A PORTS
-PORTS["HTTP"]="80"
-PORTS["API"]="1080"
-PORTS["APIS"]="1443"
-PORTS["TPIC"]="1800"
+declare -A PST
+PORTS["http"]="80"
+PORTS["api"]="1080"
+PORTS["apis"]="1443"
+PORTS["tpic"]="1800"
 NODECONFIG="/opt/thepower/node.config"
 
 dpkg -s socat 2>1 1> /dev/null
@@ -27,27 +28,33 @@ for P in "${PORTS[@]}"
     PID=$(lsof -i :$P -t)
     if [ "$?" != "0" ]
       then
-	socat TCP4-LISTEN:$P - &
+	socat TCP4-LISTEN:$P - & 
         PL="$! "
-        echo "Start listening to the port $P ($PL)"
+        echo -e "\033[33mStart listening to the port $P ($PL)"
 	PLIST="$PL $PLIST"
-      else echo "Port $P is already in use ($PID)"
+      else tput sgr0 ; echo "Port $P is already in use ($PID)"
     fi
   done	  
 
 STATUS=$(curl -s http://ansible.thepower.io:26299)
 IP=$(echo $STATUS | jq -r .ip)
-API=$(echo $STATUS | jq -r .ports.api)
-APIS=$(echo $STATUS | jq -r .ports.apis)
-TPIC=$(echo $STATUS | jq -r .ports.tpic)
-HTTP=$(echo $STATUS | jq -r .ports.http)
 
-echo -e "\033[32m$HOSTNAME"
-echo "  IP : $IP"
-echo " API : $API"
-echo "APIS : $APIS"
-echo "TPIC : $TPIC"
-echo "HTTP : $HTTP"
+for P in "${!PORTS[@]}"
+  do
+    PST["$P"]="$(echo $STATUS | jq -r .ports.$P)"
+  done
+
+echo -e "\033[35m$HOSTNAME"
+echo -e "\033[34mip : $IP"
+
+for P in "${!PST[@]}"
+  do
+    if [ "${PST[$P]}" == "open" ]
+      then echo -e "\033[32m$P : ${PST[$P]}"
+      else echo -e "\033[31m$P : ${PST[$P]}"
+    fi
+  done
+
 tput sgr0
 
 if [ -n "$PLIST" ]
