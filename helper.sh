@@ -8,14 +8,7 @@ PORTS["api"]="1080"
 PORTS["apis"]="1443"
 PORTS["tpic"]="1800"
 NODECONFIG="/opt/thepower/node.config"
-
-dpkg -s socat 2>1 1> /dev/null
-if [ "$?" != "0"  ]
-  then
-    echo -e "\033[33mThe \033[1;33msocat\033[0;33m package will be installed"
-    tput sgr0
-    apt-get -y install socat 2>1 > /dev/null
-fi
+CHECKURL="http://help.thepower.io:26299"
 
 HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2)
 
@@ -26,9 +19,9 @@ fi
 for P in "${PORTS[@]}"
   do
     PID=$(lsof -i :$P -t)
-    if [ "$?" != "0" ]
+    if [ -z "$PID" ]
       then
-	socat TCP4-LISTEN:$P - & 
+	nc -l $P & > /dev/null 2>&1
         PL="$! "
         echo -e "\033[33mStart listening to the port $P ($PL)"
 	PLIST="$PL $PLIST"
@@ -36,7 +29,7 @@ for P in "${PORTS[@]}"
     fi
   done	  
 
-STATUS=$(curl -s http://ansible.thepower.io:26299)
+STATUS=$(curl -s $CHECKURL)
 IP=$(echo $STATUS | jq -r .ip)
 
 for P in "${!PORTS[@]}"
@@ -58,6 +51,5 @@ for P in "${!PST[@]}"
 tput sgr0
 
 if [ -n "$PLIST" ]
-  then kill -9 $PLIST 2> /dev/null
+  then kill -9 $PLIST > /dev/null 2>&1
 fi
-
