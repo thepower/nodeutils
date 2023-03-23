@@ -54,7 +54,7 @@ tput sgr0
 echo -e "\033[35m\nCheck ports ..."
 for P in "${PORTS[@]}"
   do
-    PID=$(lsof -i :$P -t)
+    PID=$(lsof -i :$P -t | head -n1)
     if [ -z "$PID" ]
       then
 	nc -l $P & > /dev/null 2>&1
