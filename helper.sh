@@ -43,15 +43,14 @@ echo -e "
 \033[33mYou need to disable the firewall:
   \033[34mufw disable"
 tput sgr0
-echo -e "
-\033[33mor open the ports:
+echo -e "\033[33mor open the ports:
   \033[34mufw allow proto tcp from any to any port 80,1080,1443,1800 comment \"tpnode\""
   else echo -e "\033[32mGood !"
 fi
 tput sgr0
 
 # PORTS
-echo -e "\033[35m\nCheck ports ..."
+echo -e "\033[35m\nCheck ports ..."; tput sgr0
 for P in "${PORTS[@]}"
   do
     PID=$(lsof -i :$P -t | head -n1)
@@ -59,9 +58,9 @@ for P in "${PORTS[@]}"
       then
 	nc -l $P & > /dev/null 2>&1
         PL="$!"
-        echo -e "\033[33mStart listening to the port $P ($PL)"
+        echo "Start listening to the port $P ($PL)"
 	PLIST="$PL $PLIST"
-      else tput sgr0 ; echo "Port $P is already in use ($PID)"
+      else echo -e "\033[33mPort $P is already in use ($PID)"; tput sgr0 
     fi
   done	  
 
