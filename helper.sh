@@ -41,12 +41,11 @@ if [ "$UFWCLOSED" == "1" ]
   then
 echo -e "
 \033[33mYou need to disable the firewall:
-    \033[34mufw disable"
+  \033[34mufw disable"
 tput sgr0
 echo -e "
 \033[33mor open the ports:
-    \033[34mufw allow proto tcp from any to any port 80,1080,1443,1800 comment \"tpnode\"
-"
+  \033[34mufw allow proto tcp from any to any port 80,1080,1443,1800 comment \"tpnode\""
   else echo -e "\033[32mGood !"
 fi
 tput sgr0
@@ -89,20 +88,22 @@ if [ -n "$PLIST" ]
 fi
 
 if [ "$PORTCLOSED" == "1" ]
-  then echo -e "\033[31mYou need to open the ports"
+  then echo -e "\033[31mYou need to open the ports. Check your firewall"
   else echo -e "\033[32mGood !"
 fi
 tput sgr0
 
 # DNS
 echo -e "\033[35m\nCheck DNS ..."
-if [ -z $HOSTNAME ]
+if [ -z "$HOSTNAME" ]
   then echo -e "\033[31mHostname not defined !"; tput sgr0
   else DNSIP=$(dig +short $HOSTNAME)
-echo -e "\033[35mHostname : $HOSTNAME"
-echo -e "\033[34m      ip : $IP"
-echo -e "\033[34m   dnsip : $DNSIP"
+    echo -e "\033[34m Hostname : $HOSTNAME"
+    echo -e "\033[34mPublic IP : $IP"
+    echo -e "\033[34m   DNS IP : $DNSIP"
+    if [ "$IP" != "$DNSIP" ]
+      then echo -e "\033[31mCheck your DNS settings!"
+      else echo -e "\033[32mGood !"
+    fi
 fi
-
-
 tput sgr0
