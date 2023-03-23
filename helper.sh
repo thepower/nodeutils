@@ -58,7 +58,7 @@ for P in "${PORTS[@]}"
     if [ -z "$PID" ]
       then
 	nc -l $P & > /dev/null 2>&1
-        PL="$! "
+        PL="$!"
         echo -e "\033[33mStart listening to the port $P ($PL)"
 	PLIST="$PL $PLIST"
       else tput sgr0 ; echo "Port $P is already in use ($PID)"
