@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# A small script that checks the basic settings for the normal functioning of the node
+# The script is designed for a node installed according to the official instructions
+# Even if the script completes without errors, this does not guarantee the correct operation of the node
+# It is impossible to provide for all possible configurations of the systems,
+# so there are no guarantees of the absence of errors
+# Bug reports and participation in the expansion of the script functionality are welcome
 
 PLIST=""
 declare -A PORTS
@@ -10,8 +17,10 @@ PORTS["tpic"]="1800"
 NODECONFIG="/opt/thepower/node.config"
 CHECKURL="http://help.thepower.io:26299"
 
-HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2)
+HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2 2> /dev/null)
 DNSIP=""
+
+echo "Script for checking basic settings"
 
 # FIREWALL
 echo -e "\033[35m\nCheck firewall ..."; tput sgr0
