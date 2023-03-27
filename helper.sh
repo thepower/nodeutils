@@ -121,7 +121,7 @@ if [ -z "$HOSTNAME" ]
     CA="/opt/thepower/db/cert/${HOSTNAME}.crt.ca.crt"
     if [ -f "$CRT" -a -f "$KEY" -a -f "$CA" ]
       then
-	KEYPUB="$(openssl rsa -in $KEY -pubout 2>/dev/null)"
+	KEYPUB="$(openssl rsa -in $KEY -pubout 2> /dev/null)"
 	  if [ "$?" != "0" ]
             then KEYPUB="$(openssl ec -in $KEY -pubout 2> /dev/null)"
 	      if [ "$?" != "0" ]
@@ -130,7 +130,8 @@ if [ -z "$HOSTNAME" ]
 	  fi
 	CRTPUB="$(openssl x509 -in $CRT -pubkey -noout 2> /dev/null)"
         if [ "$KEYPUB" == "$CRTPUB" ]
-          then openssl verify -CAfile $CA $CRT > /dev/null 2>&1
+#          then openssl verify -CAfile $CA $CRT > /dev/null 2>&1
+          then openssl verify -untrusted $CA $CRT > /dev/null 2>&1
 	    if [ $? == "0" ]
 	      then
 		CRTNAME="$(openssl x509 -in $CRT -text -noout | grep "Subject: CN" | tr -d ' ' | cut -d '=' -f2)"
