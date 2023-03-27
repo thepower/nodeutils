@@ -157,3 +157,36 @@ if [ -z "$HOSTNAME" ]
 fi
 tput sgr0
 
+# acme.sh
+if [ "$SSLOK" == "1" -a "$DNSOK" == "0" ]
+  then 
+echo -ne "\nDo you want to issue and install an SSL certificate?
+The installation will be performed \033[1macme.sh\033[0m and an attempt to issue and install a certificate for domain \033[1m${HOSTNAME}\033[0m
+A good idea? [y/n] : "
+  read GI
+  if [ "$GI" == "y" -o "$GI" == "Y" ]
+    then
+      ACME="$(echo ~/.acme.sh/acme.sh)"
+      echo $ACME
+      if [ -x "$ACME" ]
+	then echo -e "The \033[1macme.sh\033[0m  is already installed"
+        else echo "Enter your email address. This is necessary to obtain an SSL certificate"
+	     echo -n "email : "
+	     read EMAIL
+	     if [ -n "$EMAIL" ]
+	       then curl https://get.acme.sh | sh -s email=$EMAIL
+	       else echo -e "\033[31mThe address cannot be empty !"; tput sgr0
+		    exit 1
+	     fi
+      fi
+      $ACME upgrade
+      $ACME --issue --force --standalone -d $HOSTNAME  --keylength ec-256
+      if [ "$?" == "0" ]
+	then $ACME --install-cert --ecc -d $HOSTNAME --cert-file $CRT --key-file $KEY --ca-file $CA
+        else echo -e "\033[31mFailed attempt to issue a certificate"; tput sgr0
+	     exit 2
+      fi
+    else echo -e "\033[33mYou need to install the certificates yourself according to the instructions"; tput sgr0
+  fi
+fi
+tput sgr0
