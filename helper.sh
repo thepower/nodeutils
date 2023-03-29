@@ -167,14 +167,14 @@ A good idea? [y/n] : "
   if [ "$GI" == "y" -o "$GI" == "Y" ]
     then
       ACME="$(echo ~/.acme.sh/acme.sh)"
-      echo $ACME
       if [ -x "$ACME" ]
 	then echo -e "The \033[1macme.sh\033[0m  is already installed"
         else echo "Enter your email address. This is necessary to obtain an SSL certificate"
 	     echo -n "email : "
 	     read EMAIL
 	     if [ -n "$EMAIL" ]
-	       then curl https://get.acme.sh | sh -s email=$EMAIL
+	       then apt-get -y install socat > /dev/null 2>&1
+		    curl https://get.acme.sh | sh -s email=$EMAIL
 	       else echo -e "\033[31mThe address cannot be empty !"; tput sgr0
 		    exit 1
 	     fi
