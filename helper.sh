@@ -188,8 +188,12 @@ A good idea? [y/n] : "
 	     echo -e "or use the recommendations from the official documentation \033[1macme.sh\033[0m"
              echo -e "For example, if you use \033[1mnginx\033[0m:"
 	     echo "  https://github.com/acmesh-official/acme.sh#7-use-nginx-mode"
-	     exit 1
+	     exit 3
       fi
+      if [ $PST["http"] != "open" ]
+	then echo -e "\033[31mPort 80 is closed. Check your firewall and try again";tput sgr0 
+	     exit 4
+      fi 
       $ACME --issue --force --standalone -d $HOSTNAME  --keylength ec-256
       if [ "$?" == "0" ]
 	then mkdir -p /opt/thepower/{db/cert,log}
