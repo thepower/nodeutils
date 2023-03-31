@@ -1,5 +1,5 @@
 # nodeutils
 Just run:
 ```
-curl -s https://help.thepower.io | bash
+bash -c "$(curl -s https://help.thepower.io)"
 ```
