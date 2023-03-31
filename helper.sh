@@ -190,7 +190,7 @@ A good idea? [y/n] : "
 	     echo "  https://github.com/acmesh-official/acme.sh#7-use-nginx-mode"
 	     exit 3
       fi
-      if [ $PST["http"] != "open" ]
+      if [ ${PST["http"]} != "open" ]
 	then echo -e "\033[31mPort 80 is closed. Check your firewall and try again";tput sgr0 
 	     exit 4
       fi 
