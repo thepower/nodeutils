@@ -164,7 +164,7 @@ echo -ne "\nDo you want to issue and install an SSL certificate?
 The installation will be performed \033[1macme.sh\033[0m and an attempt to issue and install a certificate for domain \033[1m${HOSTNAME}\033[0m
 A good idea? [y/n] : "
   read GI
-  if [ "$GI" == "y" -o "$GI" == "Y" ]
+  if [ "$GI" == "y" -o "$GI" == "Y" -o -z "$GI" ]
     then
       ACME="$(echo ~/.acme.sh/acme.sh)"
       if [ -x "$ACME" ]
@@ -201,7 +201,7 @@ A good idea? [y/n] : "
         else echo -e "\033[31mFailed attempt to issue a certificate"; tput sgr0
 	     exit 2
       fi
-    else echo -e "\033[33mYou need to install the certificates yourself according to the instructions"; tput sgr0
+    else echo -e "\033[33m\nYou need to install the certificates yourself according to the instructions"; tput sgr0
   fi
 fi
 tput sgr0
