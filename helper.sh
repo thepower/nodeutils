@@ -107,7 +107,8 @@ tput sgr0
 echo -e "\033[35m\nCheck DNS ..."
 DNSOK="1"
 if [ -z "$HOSTNAME" ]
-  then echo -e "\033[31mHostname not defined !"; tput sgr0
+  then echo -e "\033[31mHostname not defined !"
+       echo -e "\033[34mPublic IP : $IP"; tput sgr0
   else DNSIP=$(dig @8.8.8.8 +short $HOSTNAME)
     echo -e "\033[34m Hostname : $HOSTNAME"
     echo -e "\033[34mPublic IP : $IP"
