@@ -17,7 +17,11 @@ PORTS["tpic"]="1800"
 NODECONFIG="/opt/thepower/node.config"
 CHECKURL="http://help.thepower.io:26299"
 
-HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2 2> /dev/null)
+HOSTNAME=""
+if [ -f $NODECONFIG ]
+  then HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2 > /dev/null 2>&1)
+  else echo -e "\033[31mFile $NODECONFIG not found"; tput sgr0
+fi
 DNSIP=""
 
 echo "Script for checking basic settings"
