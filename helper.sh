@@ -20,8 +20,8 @@ CHECKURL="http://help.thepower.io:26299"
 echo "Script for checking basic settings"
 
 HOSTNAME=""
-if [ -f $NODECONFIG ]
-  then HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2 > /dev/null 2>&1)
+if [ -f "$NODECONFIG" ]
+  then HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2 2> /dev/null)
   else echo -e "\033[31m\nFile $NODECONFIG not found"; tput sgr0
 fi
 DNSIP=""
