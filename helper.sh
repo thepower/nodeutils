@@ -36,15 +36,15 @@ UFWCLOSED=""
 if [[ "$UFW" == *inactive* ]]
   then echo -e "\033[32mFirewall is inactive"; tput sgr0
   else echo -e "\033[33mFirewall is active"; tput sgr0
-       for P in "${PORTS[@]}"
+       for P in "${!PORTS[@]}"
 	 do
-           ufw status | grep -e "\b$P\b" | grep "ALLOW" > /dev/null 2>&1
+           ufw status | grep -e "\b${PORTS[$P]}\b" | grep "ALLOW" > /dev/null 2>&1
 	   if [ "$?" -eq "0" ]
 	   then 
-	     echo -e "\033[32mPort ${PORTS[$P]} ($P) is open"
+             echo -e "\033[32mPort $P (${PORTS[$P]}) is open"
 	     tput sgr0
            else
-	     echo -e "\033[31mPort ${PORTS[$P]} ($P) is closed  by firewall"
+	     echo -e "\033[31mPort $P (${PORTS[$P]}) is closed  by firewall"
 	     tput sgr0
 	     UFWCLOSED="1"
            fi
@@ -75,7 +75,9 @@ for P in "${PORTS[@]}"
         PL="$!"
         echo "Start listening to the port $P ($PL)"
 	PLIST="$PL $PLIST"
-      else echo -e "\033[33mPort $P is already in use ($PID)"; tput sgr0 
+      else
+	PNAME="$(ps -p $PID -o comm=)" 
+	echo -e "\033[33mPort $P is occupied by process \033[1m$PNAME\033[0m ($PID)"; tput sgr0 
     fi
   done	  
 
