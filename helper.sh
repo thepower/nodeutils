@@ -19,9 +19,23 @@ CHECKURL="http://help.thepower.io:26299"
 
 echo "Script for checking basic settings"
 
+apt-get -y install jq > /dev/null 2>&1
+
 HOSTNAME=""
+if [ ! -f "$NODECONFIG" ]
+  then DOCKERNAME="$(docker ps --format '{{.Image}} {{.Names}}' | grep 'thepowerio/tpnode' | cut -d ' ' -f2 )"
+    if [ -n "$DOCKERNAME" ]
+      then NODECONFIG=$(docker inspect $DOCKERNAME | jq -r '.[].Mounts[] | select(.Destination == "/opt/thepower/node.config") | .Source')
+    fi
+fi
+
+if [ ! -f "$NODECONFIG" ]
+  then NODECONFIG=$(find /opt -name node.config -print)
+fi
+
 if [ -f "$NODECONFIG" ]
-  then HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2 2> /dev/null)
+  then echo -e "\033[33m\nUse the node configuration file: \033[1m$NODECONFIG";tput sgr0
+       HOSTNAME=$(grep hostname $NODECONFIG | cut -d '"' -f2 2> /dev/null)
   else echo -e "\033[31m\nFile $NODECONFIG not found"; tput sgr0
 fi
 DNSIP=""
