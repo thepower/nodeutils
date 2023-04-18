@@ -33,7 +33,7 @@ if [ ! -f "$NODECONFIG" ]
 fi
 
 if [ ! -f "$NODECONFIG" ]
-  then NODECFG=$(find /opt -name node.config -print)
+  then NODECFG=$(find /opt -name node.config -print 2>/dev/null | head -n1)
     if [ -n "$NODECFG" ]
       then NODECONFIG=$NODECFG
     fi	
