@@ -25,12 +25,18 @@ HOSTNAME=""
 if [ ! -f "$NODECONFIG" ]
   then DOCKERNAME="$(docker ps --format '{{.Image}} {{.Names}}' | grep 'thepowerio/tpnode' | cut -d ' ' -f2 )"
     if [ -n "$DOCKERNAME" ]
-      then NODECONFIG=$(docker inspect $DOCKERNAME | jq -r '.[].Mounts[] | select(.Destination == "/opt/thepower/node.config") | .Source')
+      then NODECFG=$(docker inspect $DOCKERNAME | jq -r '.[].Mounts[] | select(.Destination == "/opt/thepower/node.config") | .Source')
+	if [ -n "$NODECFG" ]
+          then NODECONFIG=$NODECFG
+	fi	
     fi
 fi
 
 if [ ! -f "$NODECONFIG" ]
-  then NODECONFIG=$(find /opt -name node.config -print)
+  then NODECFG=$(find /opt -name node.config -print)
+    if [ -n "$NODECFG" ]
+      then NODECONFIG=$NODECFG
+    fi	
 fi
 
 if [ -f "$NODECONFIG" ]
