@@ -23,7 +23,7 @@ apt-get -y install jq > /dev/null 2>&1
 
 HOSTNAME=""
 if [ ! -f "$NODECONFIG" ]
-  then DOCKERNAME="$(docker ps --format '{{.Image}} {{.Names}}' | grep 'thepowerio/tpnode' | cut -d ' ' -f2 )"
+  then DOCKERNAME="$(docker ps --format '{{.Image}} {{.Names}}' 2>/dev/null | grep 'thepowerio/tpnode' | cut -d ' ' -f2 )"
     if [ -n "$DOCKERNAME" ]
       then NODECFG=$(docker inspect $DOCKERNAME | jq -r '.[].Mounts[] | select(.Destination == "/opt/thepower/node.config") | .Source')
 	if [ -n "$NODECFG" ]
