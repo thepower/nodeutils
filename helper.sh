@@ -17,7 +17,7 @@ PORTS["tpic"]="1800"
 NODECONFIG="/opt/thepower/node.config"
 CHECKURL="http://help.thepower.io:26299"
 
-echo "Script for checking basic settings"
+echo -e "\033[1mScript for checking basic settings"; tput sgr0
 
 apt-get -y install erlang-base erlang-public-key erlang-ssl dpkg-query bind9-dnsutils ufw docker-compose jq > /dev/null 2>&1
 
