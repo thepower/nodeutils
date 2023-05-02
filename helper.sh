@@ -87,14 +87,14 @@ echo -e "\033[35m\nCheck firewall ..."; tput sgr0
 FWOK="1"
 tput sgr0
 
-UFW=$(ufw status | grep -e "^Status")
+UFW=$(sudo ufw status | grep -e "^Status")
 UFWCLOSED=""
 if [[ "$UFW" == *inactive* ]]
   then echo -e "\033[32mFirewall is inactive"; tput sgr0
   else echo -e "\033[33mFirewall is active"; tput sgr0
        for P in "${!PORTS[@]}"
 	 do
-           ufw status | grep -e "\b${PORTS[$P]}\b" | grep "ALLOW" > /dev/null 2>&1
+           sudo ufw status | grep -e "\b${PORTS[$P]}\b" | grep "ALLOW" > /dev/null 2>&1
 	   if [ "$?" -eq "0" ]
 	   then 
              echo -e "\033[32mPort $P (${PORTS[$P]}) is open"
@@ -156,7 +156,7 @@ for P in "${!PST[@]}"
   done
 
 if [ -n "$PLIST" ]
-  then kill -15 $PLIST > /dev/null 2>&1
+  then sudo kill -15 $PLIST > /dev/null 2>&1
 fi
 
 if [ "$PORTCLOSED" == "1" ]
