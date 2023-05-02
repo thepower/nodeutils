@@ -19,7 +19,7 @@ CHECKURL="http://help.thepower.io:26299"
 
 echo "Script for checking basic settings"
 
-apt-get -y install erlang-base erlang-public-key erlang-ssl dpkg-query bind9-dnsutils docker-compose jq > /dev/null 2>&1
+apt-get -y install erlang-base erlang-public-key erlang-ssl dpkg-query bind9-dnsutils ufw docker-compose jq > /dev/null 2>&1
 
 # SYSTEM INFO
 
