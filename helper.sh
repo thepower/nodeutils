@@ -19,8 +19,44 @@ CHECKURL="http://help.thepower.io:26299"
 
 echo "Script for checking basic settings"
 
-apt-get -y install jq > /dev/null 2>&1
+apt-get -y install erlang-base erlang-public-key erlang-ssl dpkg-query bind9-dnsutils docker-compose jq > /dev/null 2>&1
 
+# SYSTEM INFO
+
+NPROC="$(nproc)"
+echo -e "\033[33m\nNumber of CPUs : $NPROC"
+if [ "$NPROC" -ge "4" ]
+    then echo -e "\033[32mGood !"; tput sgr0
+    else echo -e "\033[31mSmall number of processors! ( Recommended value : >=4 )"; tput sgr0
+fi
+
+MEM="$(free --giga | grep Mem | tr -s ' ' | cut -d ' ' -f2)"
+echo -e "\033[33m\nRAM size : ${MEM}Gb"
+if [ "$MEM" -ge "4" ]
+    then echo -e "\033[32mGood !"; tput sgr0
+    else echo -e "\033[31mLow RAM! ( Recommended value : >=4Gb )"; tput sgr0
+fi
+
+OSNAME="$(grep ^NAME /etc/os-release | cut -d '"' -f2)"
+OSVERSION="$(grep VERSION_ID /etc/os-release | cut -d '"' -f2)"
+MYOS="$OSNAME $OSVERSION"
+
+echo -e "\033[33m\nYour OS version : $MYOS"
+if [ "$MYOS" == "Ubuntu 22.04" ]
+    then echo -e "\033[32mGood !"; tput sgr0
+    else echo -e "\033[31mWrong OS version!"; tput sgr0
+fi
+
+ERLVER="$(erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell)"
+EVER="$(echo $ERLVER | cut -d '.' -f1,2 | tr -d '.')"
+
+echo -e "\033[33m\nErlang version : $ERLVER"; tput sgr0
+if [ "$EVER" -ge "242" ]
+    then echo -e "\033[32mGood !"; tput sgr0
+    else echo -e "\033[31mWrong Erlang version!"; tput sgr0
+fi
+
+# CONFIG
 HOSTNAME=""
 if [ ! -f "$NODECONFIG" ]
   then DOCKERNAME="$(docker ps --format '{{.Image}} {{.Names}}' 2>/dev/null | grep 'thepowerio/tpnode' | cut -d ' ' -f2 )"
