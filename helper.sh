@@ -51,6 +51,7 @@ ERLVER="$(erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir
 if [ -n "$ERLVER" ]
     then EVER="$(echo $ERLVER | cut -d '.' -f1,2 | tr -d '.')"
     else EVER="0"
+	 ERLVER="No Erlang!"
 fi
 
 echo -e "\033[33m\nErlang version : $ERLVER"; tput sgr0
