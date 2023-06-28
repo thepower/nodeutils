@@ -47,8 +47,11 @@ if [ "$MYOS" == "Ubuntu 22.04" ]
     else echo -e "\033[31mWrong OS version!"; tput sgr0
 fi
 
-ERLVER="$(erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell)"
-EVER="$(echo $ERLVER | cut -d '.' -f1,2 | tr -d '.')"
+ERLVER="$(erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell  2>/dev/null)"
+if [ -n "$ERLVER" ]
+    then EVER="$(echo $ERLVER | cut -d '.' -f1,2 | tr -d '.')"
+    else EVER="0"
+fi
 
 echo -e "\033[33m\nErlang version : $ERLVER"; tput sgr0
 if [ "$EVER" -ge "242" ]
