@@ -48,6 +48,7 @@ if [ "$MYOS" == "Ubuntu 22.04" ]
 fi
 
 ERLVER="$(erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell  2>/dev/null)"
+EVER="0"
 if [ -n "$ERLVER" ]
     then EVER="$(echo $ERLVER | cut -d '.' -f1,2 | tr -d '.')"
     else EVER="0"
